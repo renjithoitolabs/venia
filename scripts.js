@@ -1,7 +1,9 @@
 const API_PRODUCTS = "https://fakestoreapi.com/products";
 const shimmerCount = 6; // Number of shimmer items
+const itemsPerPage = 10; // Number of items to load per page
 let products = []; // Store products data globally
 let filteredProducts = []; // Store filtered products globally for sorting
+let currentIndex = 0; // Track the current index of loaded products
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -15,7 +17,7 @@ function init() {
     const searchInput = document.getElementById('searchProducts');
     const categoryCheckboxes = document.querySelectorAll('.filter-products input[type="checkbox"]');
     const closeFilterIcon = document.querySelector('.close-filter');
-    
+
     categoryCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', handleCategoryFilterChange);
     });
@@ -47,6 +49,7 @@ function init() {
 function toggleNavbar(header) {
     header.classList.toggle('mobile');
 }
+
 function toggleFilter(filterProductsMobile) {
     filterProductsMobile.classList.toggle('mobile');
 }
@@ -77,7 +80,14 @@ async function fetchAndRenderProducts() {
         products = await fetchWithRetry(API_PRODUCTS);
         filteredProducts = [...products]; // Initially, filteredProducts is the same as products
         productList.innerHTML = ''; // Clear shimmer UI
-        renderProducts(filteredProducts, productList);
+        renderProducts(filteredProducts.slice(0, itemsPerPage), productList); // Render the first set of products
+        currentIndex = itemsPerPage; // Set the initial index
+
+        // Add Load More button if there are more products to load
+        if (currentIndex < filteredProducts.length) {
+            addLoadMoreButton();
+        }
+
         updateResultsCount(filteredProducts.length); // Update the results count
 
     } catch (error) {
@@ -103,14 +113,26 @@ function handleSortChange(event) {
     const sortValue = event.target.value;
     let sortedProducts = [...filteredProducts];
     const productList = document.getElementById('product-list');
-    
-    productList.className = "product-item-list gap-25 d-grid"; // Reset to the original class
+
+    // Clear existing products
+    productList.innerHTML = ''; 
 
     if (sortValue === 'price') {
-        sortedProducts.sort((a, b) => a.price - b.price);
+        sortedProducts.sort((a, b) => a.price - b.price); // Ascending order
     }
 
-    renderProducts(sortedProducts, productList);
+    // Reset current index and load sorted products
+    currentIndex = 0;
+    renderProducts(sortedProducts.slice(0, itemsPerPage), productList);
+    currentIndex = itemsPerPage; // Set current index after rendering
+
+    // Show or hide "Load More" button
+    if (sortedProducts.length > currentIndex) {
+        addLoadMoreButton();
+    } else {
+        removeLoadMoreButton();
+    }
+
     updateResultsCount(sortedProducts.length); // Update the results count
 }
 
@@ -127,11 +149,23 @@ function handleSearch(event) {
         productList.innerHTML = '<h1>No products found matching your search.</h1>';
     } else {
         productList.className = "product-item-list gap-25 d-grid"; // Reset to the original class
-        renderProducts(filtered, productList);
+
+        // Reset current index and load searched products
+        currentIndex = 0;
+        renderProducts(filtered.slice(0, itemsPerPage), productList);
+        currentIndex = itemsPerPage; // Set current index after rendering
+
+        // Show or hide "Load More" button
+        if (filtered.length > currentIndex) {
+            addLoadMoreButton();
+        } else {
+            removeLoadMoreButton();
+        }
     }
 
     updateResultsCount(filtered.length); // Update the results count
 }
+
 
 function handleCategoryFilterChange() {
     const selectedCategories = Array.from(document.querySelectorAll('.filter-products input[type="checkbox"]:checked'))
@@ -144,18 +178,30 @@ function filterProductsByCategory(categories) {
     let filtered = products; // Assume `products` contains all fetched products
     const productList = document.getElementById('product-list');
 
-    productList.className = "product-item-list gap-25 d-grid"; // Reset to the original class
+    // Reset the class and clear existing products
+    productList.className = "product-item-list gap-25 d-grid"; 
+    productList.innerHTML = ''; 
 
     if (categories.length > 0) {
         filtered = products.filter(product => categories.includes(product.category));
     }
 
-    renderProducts(filtered, productList);
+    // Reset current index and load filtered products
+    currentIndex = 0;
+    renderProducts(filtered.slice(0, itemsPerPage), productList);
+    currentIndex = itemsPerPage; // Set current index after rendering
+
+    // Show or hide "Load More" button
+    if (filtered.length > currentIndex) {
+        addLoadMoreButton();
+    } else {
+        removeLoadMoreButton();
+    }
+
     updateResultsCount(filtered.length); // Update the results count
 }
 
 function renderProducts(products, container) {
-    container.innerHTML = ''; // Clear current product list
     const fragment = document.createDocumentFragment();
 
     products.forEach(product => {
@@ -164,6 +210,7 @@ function renderProducts(products, container) {
     });
 
     requestAnimationFrame(() => {
+        container.innerHTML = ''; // Clear existing products
         container.appendChild(fragment); // Append all items at once
     });
 }
@@ -206,32 +253,73 @@ function createProductItem(product) {
     productName.textContent = truncatedTitle;
     productName.className = "product-item-name mt-10";
 
-    // Create and configure the product price element
-    const productPrice = document.createElement('p');
-    productPrice.textContent = `${product.price}`;
-    productPrice.className = "product-item-price my-10 bold";
+    // Create and configure the price element
+    const price = document.createElement('p');
+    price.className = "product-item-price";
+    price.textContent = `₹ ${product.price}`;
 
-    // Create and configure the favorite button
-    const productFav = document.createElement('button');
-    productFav.className = "btn product-item-fav";
-    productFav.ariaLabel = "Add to favorites";
-    productFav.innerHTML = '<i class="material-icons">favorite_border</i>';
+    // Create and configure the favorite icon element
+    const favoriteIcon = document.createElement('span');
+    favoriteIcon.className = "favorite-icon";
+    favoriteIcon.innerHTML = '&#9734;'; // Star icon for favorites
 
-    // Append elements to the product item
-    productItem.append(imageWrapper, productName, productPrice, productFav);
+    // Append all elements to the product item
+    productItem.appendChild(imageWrapper);
+    productItem.appendChild(productName);
+    productItem.appendChild(price);
+    productItem.appendChild(favoriteIcon);
 
     return productItem;
 }
 
-function updateResultsCount(count) {
-    const resultsCount = document.getElementById('results-count');
-    resultsCount.textContent = `${count} Results found`;
+function addLoadMoreButton() {
+    const productList = document.getElementById('product-list');
+    let loadMoreBtn = document.getElementById('load-more-btn');
+
+    if (!loadMoreBtn) {
+        loadMoreBtn = document.createElement('button');
+        loadMoreBtn.id = 'load-more-btn';
+        loadMoreBtn.textContent = 'Load More';
+        loadMoreBtn.className = 'load-more-btn btn info mt-30';
+        loadMoreBtn.addEventListener('click', loadMoreProducts);
+        productList.parentNode.appendChild(loadMoreBtn);
+    }
 }
 
-function debounce(fn, delay) {
-    let timeoutId;
+function removeLoadMoreButton() {
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.remove();
+    }
+}
+
+function loadMoreProducts() {
+    const productList = document.getElementById('product-list');
+    
+    // Set nextProducts to the entire filteredProducts array
+    const nextProducts = filteredProducts;
+
+    renderProducts(nextProducts, productList);
+
+    // Update currentIndex and check if the button needs to be hidden
+    currentIndex += itemsPerPage;
+    if (currentIndex >= filteredProducts.length) {
+        removeLoadMoreButton();
+    }
+}
+
+function updateResultsCount(count) {
+    const resultsCountElement = document.getElementById('results-count');
+    if (resultsCountElement) {
+        resultsCountElement.textContent = `${count} items found`;
+    }
+}
+
+function debounce(func, wait) {
+    let timeout;
     return function(...args) {
-        if (timeoutId) clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => fn.apply(this, args), delay);
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
     };
 }
+
