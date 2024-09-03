@@ -139,8 +139,9 @@ h1 {
 
 .form-control{
     border: .1rem solid var(--base-border);
-    padding: .5rem;
+    padding: .5rem 1rem;
     margin-left: .5rem;
+    border-radius: .25rem;
 }
 
 .btn{
@@ -299,6 +300,7 @@ h1 {
     height: 27rem;
     overflow: hidden;
     border: .1rem solid #eee;
+    border-radius: .25rem;
     padding: 2rem;
 }
 .product-item-image {
