@@ -259,9 +259,9 @@ function createProductItem(product) {
     price.textContent = `₹ ${product.price}`;
 
     // Create and configure the favorite icon element
-    const favoriteIcon = document.createElement('span');
-    favoriteIcon.className = "favorite-icon";
-    favoriteIcon.innerHTML = '&#9734;'; // Star icon for favorites
+    const favoriteIcon = document.createElement('button');
+    favoriteIcon.className = "btn";
+    favoriteIcon.innerHTML = '<i class="material-icons">favorite_border</i>';
 
     // Append all elements to the product item
     productItem.appendChild(imageWrapper);
