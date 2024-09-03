@@ -1,39 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Shop the latest trends in fashion at Venia. Discover our collection of clothing, smart gear, and accessories for men and women.">
+    <meta name="description"
+        content="Shop the latest trends in fashion at Venia. Discover our collection of clothing, smart gear, and accessories for men and women.">
     <title>Venia - Online Shopping</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+
+    <!-- Preconnect to speed up font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 </head>
+
+
 <body>
-    <header class="page-header">
-        <h1>Venia - Online Shopping</h1>
-        <nav aria-label="Main navigation">
-            <button id="menu-toggle" aria-expanded="false" aria-controls="nav-menu">Navigation</button>
-            <ul id="nav-menu" class="menu">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#women">Women</a></li>
-                <li><a href="#men">Men</a></li>
-                <li><a href="#smart-gear">Smart Gear</a></li>
-                <li><a href="#accessories">Accessories</a></li>
-            </ul>
-        </nav>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="container d-flex justify-between align-center">
+            <!-- Mobile Navigation -->
+            <button class="btn navbar-toggler visible-sm" type="button" aria-label="Toggle Navigation">
+                <i class="material-icons">menu</i>
+            </button>
+            <a class="logo" href="/" aria-label="Venia Logo">
+                <img src="assets/logo-white.png" alt="Venia Logo" />
+            </a>
+            <!-- Main Navigation -->
+            <nav class="nav hidden-smm" aria-label="Main Navigation">
+                <ul class="d-flex">
+                    <li><a href="#home" aria-current="page">Home</a></li>
+                    <li><a href="#women">Women</a></li>
+                    <li><a href="men.html" class="active">Men</a></li>
+                    <li><a href="#smart-gear">Smart Gear</a></li>
+                    <li><a href="#accessories">Accessories</a></li>
+                </ul>
+            </nav>
+            <div class="shopping-cart" aria-label="Shopping Cart">
+                <i class="material-icons">shopping_bag</i>
+                <sup class="d-flex-inline justify-center align-center">10</sup>
+            </div>
+        </div>
     </header>
-    <main id="main-content" class="page-content">
-        <section id="home">
-            <h2>Welcome to our Venia</h2>
-            <p>page content</p>
+    <!-- END HEADER -->
+    <!-- HERO -->
+    <section class="hero-section d-grid" role="banner">
+        <div class="hero-title d-flex justify-center align-center">
+            <h1 class="text-center">Men's<br>Outerwear</h1>
+        </div>
+        <div class="hero-image">
+            <img src="https://www.artless-store.com/cdn/shop/files/1_5523ec7d-c83f-4782-86e0-1d84b998d397.png?v=1704529006"
+                alt="Men's Outerwear">
+        </div>
+    </section>
+    <!-- END HERO -->
+    <main class="main-content">
+        <section class="products container gap-25 d-grid">
+            <!-- Filter Products -->
+            <aside class="filter-products mt-25" aria-label="Filter Products">
+                <h4 class="d-flex justify-between align-center">Filters
+                    <i class="material-icons visible-sm cursor-pointer close-filter">cancel_presentation</i>
+                </h4>
+                <p class="my-10">Categories</p>
+                <ul>
+                    <li>
+                        <label for="men-clothing">
+                            <input type="checkbox" id="men-clothing" value="men's clothing" />
+                            Men's Clothing
+                        </label>
+                    </li>
+                    <li>
+                        <label for="jewellery">
+                            <input type="checkbox" id="jewellery" value="jewelery" />
+                            Jewelery
+                        </label>
+                    </li>
+                    <li>
+                        <label for="electronics">
+                            <input type="checkbox" id="electronics" value="electronics" />
+                            Electronics
+                        </label>
+                    </li>
+                    <li>
+                        <label for="women-clothing">
+                            <input type="checkbox" id="women-clothing" value="women's clothing" />
+                            Women's Clothing
+                        </label>
+                    </li>
+                </ul>
+            </aside>
+            <!-- End Filter Products -->
+            <section class="product-list" aria-label="Product Listings">
+                <!-- Result Panel -->
+                <div class="gap-25 d-grid py-25 result-panel">
+                    <p id="results-count" class="bold"></p>
+                    <label for="searchProducts" class="search-products-wrap">
+                        <input type="text" id="searchProducts" name="searchProducts"
+                            placeholder="Search products here..." class="form-control search-input" />
+                    </label>
+                    <div class="mobile-filter-wrap visible-sm d-flex-sm justify-between align-center mt-10">
+                        <label class="filter-toggler cursor-pointer"><i class="material-icons">tune</i>Filter
+                            Products</label>
+                        <label id="sort-options-mobile" class="cursor-pointer"><i
+                                class="material-icons">swap_vert</i>Sort Products</label>
+                    </div>
+                    <label for="sort-options" class="sort-label hidden-sm text-right">
+                        Sort by:
+                        <select id="sort-options" name="sort-options" class="form-control">
+                            <option value="select">None</option>
+                            <option value="price">Price</option>
+                        </select>
+                    </label>
+                </div>
+                <!-- End Result Panel -->
+                <!-- Product Listing -->
+                <ul id="product-list" class="product-item-list gap-25 d-grid"></ul>
+                <!-- End Product Listing -->
+            </section>
         </section>
     </main>
-    <footer class="page-footer">
-        <p>&copy; 2024 Venia</p>
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content container gap-25 mt-35 py-35 d-grid">
+            <div>
+                <h4>Account</h4>
+                <ul>
+                    <li><a href="#">Sign In</a></li>
+                    <li><a href="#">Register</a></li>
+                    <li><a href="#" aria-label="Check your order status">Order Status</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>About Us</h4>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#" aria-label="Check your order status">Order Status</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Help</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#" aria-label="Check your order status">Order Status</a></li>
+                    <li><a href="#">Returns</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Follow Us!</h4>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore.</p>
+                <p>
+                    <a href="https://www.google.com/" target="_blank" aria-label="Follow us on Google" class="btn">
+                        <i class="material-icons" aria-hidden="true">favorite_border</i>
+                    </a>
+                </p>
+            </div>
+        </div>
+        <div class="footer-copyright container gap-25 my-25 d-grid">
+            <a class="logo" href="/" aria-label="Venia Logo">
+                <img src="assets/logo-black.png" alt="Venia Logo" />
+            </a>
+            <p class="text-center">&copy; Venia Shopping, Bangalore, 691577</p>
+            <div class="text-right">
+                <a href="/terms-of-use" aria-label="Terms of Use" class="underline">Terms of Use</a>
+                <a href="/privacy-policy" aria-label="Privacy Policy" class="ml-10 underline">Privacy Policy</a>
+            </div>
+        </div>
     </footer>
+    <!-- END FOOTER -->
+
+    <!-- Scripts -->
     <script src="scripts.js" defer></script>
 </body>
+
 </html>
