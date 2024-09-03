@@ -4,6 +4,7 @@ const itemsPerPage = 10; // Number of items to load per page
 let products = []; // Store products data globally
 let filteredProducts = []; // Store filtered products globally for sorting
 let currentIndex = 0; // Track the current index of loaded products
+let isAscending = true;
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -36,10 +37,20 @@ function init() {
     // Add event listener for sorting
     sortOptions.addEventListener('change', handleSortChange);
     sortOptionsMobile.addEventListener('click', () => {
-        // Simulate selecting 'price' option
-        sortOptions.value = 'price';
-        handleSortChange({ target: sortOptions }); // Trigger sorting
+        const currentSortValue = sortOptions.value;
+    
+        if (currentSortValue === 'price low') {
+            // Switch to 'price high'
+            sortOptions.value = 'price high';
+        } else {
+            // Switch to 'price low' or set it initially
+            sortOptions.value = 'price low';
+        }
+    
+        // Trigger sorting based on the new value
+        handleSortChange({ target: sortOptions });
     });
+    
 
     // Add debounced event listener for search
     const debouncedSearch = debounce(handleSearch, 300);
@@ -117,8 +128,10 @@ function handleSortChange(event) {
     // Clear existing products
     productList.innerHTML = ''; 
 
-    if (sortValue === 'price') {
+    if (sortValue === 'price low') {
         sortedProducts.sort((a, b) => a.price - b.price); // Ascending order
+    } else if(sortValue === 'price high') {
+        sortedProducts.sort((a, b) => b.price - a.price); // Descending order
     }
 
     // Reset current index and load sorted products
